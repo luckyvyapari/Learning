@@ -36,6 +36,7 @@ Personal quick-reference notes following Stéphane Maarek's Udemy course. Each f
 | 26 | [disaster-recovery-migrations](26-disaster-recovery-migrations.md) | RPO/RTO, DR strategies, DMS/SCT, MGN, AWS Backup |
 | 27 | [more-solutions-architecture](27-more-solutions-architecture.md) | HPC, HA EC2, CloudFormation, SSM, Batch, Outposts, cost tools |
 | 28 | [well-architected-exam-tips](28-well-architected-exam-tips.md) | 6 pillars, Trusted Advisor, exam logistics, decision cheat sheet |
+| 29 | [course-outline-map](29-course-outline-map.md) | All 33 course sections mapped to notes + hands-on-only extras (CloudShell, Budgets, ports) |
 
 ## Top 25 Numbers & Facts to Remember
 
