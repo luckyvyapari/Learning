@@ -1,6 +1,8 @@
 # AWS Solutions Architect Associate (SAA-C03) — Complete Quick Revision
 
-One file covering all topics. Each topic has the key facts, then **exam-style practice questions** (click "Answer" to reveal). Full detail lives in the numbered files (01–29).
+One file covering all topics. Each topic has the key facts, a **"Yaad rakho (exam traps)"** block in Hinglish (built from all 315 official course quiz questions + lecture transcripts), then **exam-style practice questions** (click "Answer" to reveal). Full detail lives in the numbered files (01–29).
+
+**Kaise padhna hai:** pehle "Yaad rakho" block padho, phir question khud solve karo, tab answer kholo. Exam English mein hai, isliye **bold keywords** wahi hain jo exam ke question mein dikhenge.
 
 ---
 
@@ -50,6 +52,48 @@ One file covering all topics. Each topic has the key facts, then **exam-style pr
 
 ---
 
+## Desi Memory Map (Sohagpur style — ek baar padho, yaad reh jaayega)
+
+| AWS cheez | Apne yahan jaisa | Exam mein kab |
+|---|---|---|
+| **Region / AZ** | Region = Narmadapuram zila, AZ = zile ke alag-alag kasbe (Sohagpur, Pipariya, Itarsi) — ek mein bijli gayi to doosra chalu | "survive AZ failure" → **Multi-AZ** |
+| **Edge location** | Har mohalle ki kirana dukaan | CloudFront, Route 53, Global Accelerator |
+| **EBS** | Apni almirah — ek hi kamre (AZ) mein, ek aadmi use kare | Single instance ki disk |
+| **EFS** | Gaon ka common handpump — sab ghar, sab mohalle use karein | "shared across instances / AZs" (Linux) |
+| **Instance Store** | Jeb ki chillar — sabse jaldi haath aati, kurta dhula to gayi | "highest IOPS, temporary cache" |
+| **S3 Glacier** | Pachmarhi ka godown — sasta, par maal nikalne mein time | Archive, compliance, rarely accessed |
+| **Snowball** | Truck bhar ke data bhejna, net ka intezaar nahi | "TBs/PBs, slow network" |
+| **SQS** | Bus stand ki line / token system — kaam line mein, jab fursat ho uthao | "decouple, buffer spikes" |
+| **SNS** | Mandir ka loudspeaker — ek announcement, sab sunte | "one message, many receivers" → fan-out |
+| **Kinesis Data Streams** | Narmada ki dhaara — lagatar real-time behta data, peeche jaake dobara dekh sakte | "real-time, replay" |
+| **Firehose** | Tanker — data bhar ke S3/Redshift mein utaar deta | "near real-time, load to S3/Redshift" |
+| **CloudFront** | Mohalle ki dukaan mein pehle se rakha maal (cache) | "static content, global users" |
+| **Global Accelerator** | AWS ki private expressway, 2 pakke IP | "static IP + global + TCP/UDP" |
+| **Route 53 TTL** | Logon ko purana pata yaad hai — jab tak bhoolenge nahi, purane ghar jaayenge | "still going to old server" |
+| **VPC / Subnet** | VPC = apna gaon, subnet = mohalla | Network isolation |
+| **NACL** | Mohalle ka gate — aana aur jaana dono ka niyam alag likhna (**stateless**) | Subnet level, IP **deny** kar sakta |
+| **Security Group** | Ghar ka darwaza — jo bahar gaya wo wapas aa sakta (**stateful**) | Instance level, sirf **allow** |
+| **VPC Peering** | Do gaon ke beech seedhi sadak — teesre gaon tak apne aap nahi pahunchte (**not transitive**) | Few VPCs |
+| **Transit Gateway** | Itarsi junction — saari railway lines ek jagah judti | "many VPCs + on-prem, hub-and-spoke" |
+| **Direct Connect** | Apni private pakki sadak — banane mein 1 mahina+ | "consistent, private, high bandwidth" |
+| **Site-to-Site VPN** | Public highway pe band (encrypted) gaadi — turant chalu | "quick, encrypted over internet", DX backup |
+| **Multi-AZ (RDS)** | Backup generator — roz use nahi, light gayi to turant chalu | HA / failover |
+| **Read Replica** | Photocopy — sirf padhne ke liye | "scale reads, reporting" |
+| **ElastiCache** | Dukaan ke counter pe rakha fast-selling maal | "cache, session store, leaderboard" |
+| **IAM Role** | Gate pass — service ko thodi der ki permission | "EC2/Lambda needs access to S3" |
+| **SCP** | Zila collector ka order — poore account pe limit, admin bhi nahi tod sakta | "restrict accounts in Organization" |
+| **KMS** | Bank ka locker — chaabi AWS sambhale, use ka record CloudTrail mein | Encryption, audit key usage |
+| **CloudTrail** | CCTV camera — kisne kab kya kiya | "who deleted / API audit" |
+| **CloudWatch** | Bijli ka meter — kitna use, alarm | Metrics, logs, alarms |
+| **Config** | Patwari ka record — zameen (setting) pehle kaisi thi, ab kaisi | "config history, compliance" |
+| **Spot Instance** | Mandi mein shaam ka bacha maal — 90% sasta, par kabhi bhi wapas | "interruptible, fault-tolerant" |
+| **Reserved / Savings Plan** | Saal bhar ka doodh ka bandhan — sasta, commitment | "steady 1–3 year usage" |
+| **DR: Pilot Light** | Chulhe ki chhoti lau — sirf zaroori (DB) jalta | Core running, rest off |
+| **DR: Warm Standby** | Chhota chulha poora jal raha — zaroorat pe aanch badhao | Scaled-down full copy |
+| **DR: Multi-Site** | Do rasoi, dono chalu | Lowest RTO/RPO, sabse mehenga |
+
+---
+
 ## 01. Global Infrastructure
 
 - **Region** = cluster of data centers; **AZ** = 1+ isolated data centers (3 typical, min 3, max 6); **Edge locations** 400+ (CloudFront, Route 53, Global Accelerator)
@@ -73,6 +117,14 @@ A) Lowest price B) Compliance / data governance C) Number of AZs D) Newest servi
 - **Least privilege**. Root account only for account setup. Enforce **MFA** + password policy
 - Console = password + MFA; CLI/SDK = **access keys** (never share, never put on EC2)
 - **Credentials Report** (account level, all users' credentials) · **Access Advisor** (user level, services used + last accessed)
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **IAM Role** = permission ka "gate pass" jo AWS service (EC2, Lambda) ko milta hai. Role user ko assign nahi hota — service ke liye hota hai
+- **Credentials Report** = poore account ke sab users ki list + unke password/key ka haal. **Access Advisor** = ek user ko kaun si service ki permission mili, aur last kab use hui
+- **Group ke andar sirf users** — group ke andar group nahi. Ek user kai groups mein ho sakta hai, ya kisi mein nahi
+- Policy ke **statement** mein: Sid, Effect, Principal, Action, Resource, Condition. **Version** policy ka hissa hai, statement ka nahi (trick question!)
+- Root account = ghar ki asli chaabi. **MFA lagao**, roz ke kaam mein use mat karo. Permission utni hi do jitni zaroorat — **least privilege**
 
 **Q2.** An application on EC2 must read from S3. What is the most secure way to give access?
 A) Store access keys in the AMI B) Store keys in user data C) Attach an IAM role to the instance D) Make the bucket public
@@ -114,6 +166,16 @@ A) Credentials Report B) Access Advisor C) CloudTrail Insights D) Trusted Adviso
 
 - Spot: **cancel Spot request first, then terminate** instances. Spot Fleet strategy `priceCapacityOptimized` recommended
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **Compute optimized** (c) = dimaag wala kaam: HPC, batch, video transcoding, gaming, ML
+- **Memory optimized** (r, x) = bada RAM: in-memory database, real-time big data
+- **Storage optimized** (i, d) = local disk pe tez read/write: high-frequency **OLTP**, NoSQL, data warehouse
+- Reserved Instance sirf **1 ya 3 saal**. "Saal bhar lagatar chalega" → **Reserved**
+- **Dedicated Host** = poora server tumhara, **socket/core dikhte hain** (license ke liye). Sabse mehenga
+- **Spot Fleet** = Spot + chaaho to **On-Demand** bhi. Spot = mandi mein bacha maal sasta — par kabhi bhi wapas le lenge
+- Ek Security Group kai instances pe lag sakta hai. Pehli boot pe software install → **User Data** script
+
 **Q4.** A nightly image-processing job can be interrupted and restarted. Cheapest option?
 A) On-Demand B) Reserved C) Spot D) Dedicated Host
 
@@ -149,6 +211,13 @@ A) Dedicated Instances B) Dedicated Hosts C) Spot D) Savings Plan
 - **Placement groups**: **Cluster** (same AZ, low latency, 10 Gbps, HPC) · **Spread** (separate hardware, max **7 per AZ**, critical apps) · **Partition** (racks, 100s of instances — Hadoop, Cassandra, Kafka)
 - **ENI**: virtual NIC, AZ-bound, move between instances for failover
 - **Hibernate**: RAM saved to **encrypted root EBS**, RAM < 150 GB, max 60 days → fast boot
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Stop/start ke baad public IP badal gaya → **Elastic IP** lo (pakka pata)
+- **Cluster** = sab ek hi rack pe paas-paas, sabse tez network. **Spread** = alag-alag hardware pe, ek gaya to baaki bache (max availability)
+- **ENI ek AZ se bandha hai** — doosre AZ ke instance pe nahi lagega
+- **Hibernate** = RAM ka data root disk pe save. Root **EBS + encrypted** hona chahiye (instance store nahi chalega), RAM < 150 GB
 
 **Q7.** A big data job needs the lowest network latency between instances. Which placement group?
 A) Spread B) Partition C) Cluster D) None
@@ -186,6 +255,15 @@ A) Use instance store B) EC2 Hibernate C) Larger instance D) Placement group
 
 - Encrypt existing volume: **snapshot → copy with encryption → new volume**
 - **EFS**: managed NFS, **Linux only**, multi-AZ, auto-scales, pay per use; modes General Purpose / Max I/O; throughput Bursting/Provisioned/Elastic; tiers Standard / IA / Archive
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **EBS** = apni almirah — ek hi kamre (**AZ**) mein rehti hai. Doosre AZ le jaana ho → snapshot banao
+- **AMI ek Region ki** hoti hai — doosre region mein chahiye to **AMI copy** karo
+- **Delete on Termination**: root disk ON (instance gaya to disk bhi gayi), extra disk OFF. Root ka data bachana → ise band karo
+- **Boot disk sirf gp2, gp3, io1, io2** — st1/sc1 se boot nahi hota
+- Unencrypted disk ko encrypt karna → snapshot → **copy with encryption** → nayi volume
+- **Instance Store** = jeb ki chillar — sabse tez, par instance gaya to paisa gaya. 256,000 se zyada IOPS (jaise 310,000) → **Instance Store**
 
 **Q9.** Many EC2 Linux instances across 3 AZs need the same shared files. Which storage?
 A) EBS gp3 B) Instance Store C) EFS D) EBS Multi-Attach
@@ -232,6 +310,21 @@ A) Detach and attach B) Snapshot then restore in 1b C) Enable Multi-Attach D) Us
 - **ASG**: min/desired/max, Launch Template, replaces unhealthy instances, free
 - Scaling: **Target tracking** (simplest), Step/Simple, **Scheduled**, **Predictive**. Good metric: `RequestCountPerTarget`. Cooldown 300 s
 - SG pattern: EC2 allows traffic only from the **LB's security group**
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- r4.large → r4.4xlarge = ek hi aadmi ko pehelwan banana = **vertical**. ASG mein aur instances = aur aadmi lagana = **horizontal**
+- Load balancer deta hai **pakka DNS naam**. Pakka IP sirf **NLB** deta hai (har AZ mein ek, Elastic IP laga sakte)
+- ALB ke peeche app ko ALB ka IP dikhta hai → asli client IP **X-Forwarded-For** header mein
+- **ALB**: HTTP, HTTPS, **WebSocket** (plain TCP nahi). Route kare path, hostname, header, query string, source IP pe — **location (geography) pe nahi**. Target: EC2, private IP, Lambda — **NLB nahi**
+- Har page pe dobara login → **sticky session** = roz usi nai (barber) ke paas jaana. Reserved cookie naam: **AWSALB, AWSALBAPP, AWSALBTG**
+- Ek AZ mein 2, doosre mein 5 instance, load barabar nahi → **Cross-Zone Load Balancing**
+- Ek listener pe kai HTTPS certificate → **SNI**. HTTP ko HTTPS pe bhejna → ALB **redirect rule**
+- NLB health check: **TCP, HTTP, HTTPS** teeno
+- ASG **max se upar aur min se neeche kabhi nahi** jaata — alarm chahe kitna bhi baje
+- ELB health check fail → ASG instance ko **terminate karke naya** laata hai
+- Jo metric AWS mein hai hi nahi (DB requests/min) → **custom metric** + alarm. "Average 1000 pe rakho" → **target tracking**
+- UDP / millions request / ultra-low latency / static IP → **NLB**
 
 **Q12.** A partner must whitelist a fixed IP for a TCP service. Which LB?
 A) ALB B) NLB with Elastic IP C) CLB D) GWLB
@@ -285,6 +378,23 @@ A) Target tracking only B) Scheduled scaling C) Manual D) Bigger instances
 - **Aurora**: MySQL/Postgres compatible, **6 copies in 3 AZ**, up to 15 replicas, auto-grows to 256 TB, failover < 30 s, writer + reader + custom endpoints, **Serverless**, **Global Database** (< 1 s lag, RTO < 1 min), **Backtrack**, **Cloning**, **Babelfish** (T-SQL)
 - **ElastiCache**: Redis (HA, persistence, sorted sets → leaderboards) vs Memcached (sharding, multi-thread, no HA). Patterns: **lazy loading** (may be stale), **write-through** (never stale), **session store** (TTL). Needs code changes
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- RDS mein **MongoDB nahi** hota (PostgreSQL, MySQL, MariaDB, Oracle, SQL Server, Db2 hain)
+- **Read Replica** = photocopy, sirf padhne ke liye, **async** (thoda purana data dikh sakta hai)
+- **Multi-AZ** = backup generator — roz use nahi hota, light gayi to turant chalu. **Sync**, **same connection string**
+- "Kaun read scale NAHI karta?" → **Multi-AZ**. Reporting se prod slow → **Read Replica**
+- Same region mein replica ka traffic **free** (alag AZ ho tab bhi). Doosre region mein paisa lagta hai
+- Region DR + read/write + HA → **doosre region mein Read Replica + us replica pe Multi-AZ**
+- DB encrypt karna → snapshot → **copy with encryption** → restore. Unencrypted DB ki replica bhi **unencrypted** hi banegi
+- **IAM DB auth**: MySQL, PostgreSQL, MariaDB — **Oracle nahi**
+- Aurora = MySQL + PostgreSQL, **15 replicas**. Kabhi-kabhi load → **Aurora Serverless**. Test ke liye prod ki copy jaldi → **Aurora Cloning**. Lambe samay ka backup → **manual snapshot** (automatic sirf 35 din)
+- **Aurora Global Database**: doosre region mein < 1 second mein data, RTO < 1 minute
+- Paisa bachao: DB mahine mein 2 ghante use → **snapshot + delete**, zaroorat pe restore (stop DB ka bhi storage ka paisa lagta hai)
+- 100 EC2 baar-baar reconnect kar rahe → **RDS Proxy** (connection pool, failover time 66% kam)
+- Game leaderboard → **ElastiCache Redis Sorted Sets**. Redis pe IAM user se login → **IAM Authentication**
+- Oracle/SQL Server ka OS bhi customize karna → **RDS Custom**
+
 **Q16.** A reporting job slows the production MySQL database. Best fix?
 A) Multi-AZ B) Read Replica for reporting C) Bigger instance D) ElastiCache
 
@@ -333,6 +443,14 @@ A) Memcached B) ElastiCache for Redis (Sorted Sets) C) DAX D) CloudFront
 - 3rd-party registrar → create hosted zone, update **NS records** at registrar
 - **Resolver endpoints**: **Inbound** (on-prem resolves AWS names), **Outbound** (AWS forwards to on-prem)
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Domain → load balancer → **Alias** record (root domain pe bhi chalta hai, free)
+- Record badla par log purane ELB pe ja rahe → **TTL** = logon ko purana pata yaad hai, abhi bhoole nahi
+- 5% traffic naye version ko → **Weighted**. Sabse kam latency → **Latency**. Sirf ek desh allow → **Geolocation**
+- Domain GoDaddy se liya → Route 53 mein **public hosted zone** banao, **NS records GoDaddy pe** badlo
+- Health check: endpoint, doosre health check, **CloudWatch alarm** — **SQS ka health check nahi** hota
+
 **Q20.** Point `example.com` (zone apex) to an ALB.
 A) CNAME B) A record with ALB IP C) Alias record D) MX record
 
@@ -379,6 +497,14 @@ A) HTTP health check on private IP B) Health check on a CloudWatch alarm C) Calc
 - **Fast instantiation**: **Golden AMI** + **User Data** (dynamic config); RDS/EBS **restore from snapshot**
 - **Elastic Beanstalk**: PaaS for developers (code only), uses EC2/ASG/ELB/RDS, free (pay for resources). **Web tier** vs **Worker tier** (SQS). Modes: single instance (dev) / HA with LB (prod)
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- ASG min 2 hamesha chalte hain → un 2 ke liye **Reserved Instance** lo
+- Stateless app: session ElastiCache / DynamoDB / RDS / cookie mein — **EBS mein kabhi nahi**
+- 100s instances ko same software update → **EFS** (gaon ka common handpump, sab use karein)
+- Install mein 1 ghanta / Beanstalk deploy slow → **Golden AMI** (sab pehle se bhara hua tiffin)
+- Beanstalk dev sasta → **Single Instance mode**
+
 **Q24.** Users lose their shopping cart when an instance is replaced by the ASG. Best stateless fix?
 A) Sticky sessions B) Store cart in cookies C) Store session data in ElastiCache keyed by session ID D) Bigger instances
 
@@ -418,6 +544,15 @@ A) CloudFormation B) Elastic Beanstalk C) EC2 + ASG manually D) Lambda@Edge
 | Glacier Deep Archive | 180 | 12 h / 48 h, cheapest |
 | Intelligent-Tiering | — | Auto-moves, monitoring fee, **no retrieval fee** |
 | Express One Zone | — | Directory bucket, single-digit ms, 10x faster |
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Bucket naam **poori duniya mein unique** — "dev" pehle se kisi ne le liya
+- Versioning on kiya → purani files ka version **null**
+- IAM mein **explicit DENY** hai to bucket policy ka Allow bekaar — Deny hamesha jeetta hai
+- Object ke liye bucket policy mein `arn:aws:s3:::bucket/*` chahiye (sirf bucket ARN nahi)
+- Replication **chain nahi hoti**: A→B aur A→C alag-alag. Dono mein versioning. Sirf nayi files (purani → **Batch Replication**)
+- Glacier = Pachmarhi ke godown mein rakha maal, nikalne mein time lagta hai. Flexible: Expedited 1–5 min, Standard 3–5 ghante, Bulk 5–12 ghante. **Deep Archive**: Standard 12 ghante, Bulk 48 ghante (**Expedited nahi**)
 
 **Q26.** Static website on S3 returns 403 Forbidden.
 A) Enable versioning B) Add bucket policy allowing public s3:GetObject (and disable Block Public Access) C) Enable CORS D) Use SSE-KMS
@@ -467,6 +602,15 @@ A) Standard-IA B) Intelligent-Tiering C) Glacier Instant D) One Zone-IA
 - **Batch Operations**: bulk copy/encrypt/tag/restore/Lambda (list via **S3 Inventory** + Athena)
 - **Storage Lens**: org-wide analytics (free 14 days / advanced 15 months)
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- File upload pe khabar → **S3 Event Notifications**
+- Purane versions delete → lifecycle **Expiration**. Tier badalna → **Transition**. Adhoore multipart parts hatana → **lifecycle rule**
+- Kitne din baad tier badlein? → **S3 Analytics**
+- 1 lakh files ke sirf pehle 250 bytes padhne → **Byte-Range Fetch**
+- Multipart: **100 MB** se upar recommended, **5 GB** se upar zaroori. Net kamzor + tez upload → **Multipart + Transfer Acceleration**
+- Saari purani files encrypt karni → **S3 Batch Operations**
+
 **Q30.** Users worldwide upload large files to one bucket in us-east-1 slowly.
 A) CRR B) Transfer Acceleration + multi-part upload C) CloudFront signed URLs D) Requester Pays
 
@@ -514,6 +658,17 @@ A) Script with SDK B) S3 Batch Operations C) Re-upload D) Default encryption
 - **Object Lock** (versioning): **Compliance** (nobody, not even root, can delete) / **Governance** (special permission can) / **Legal Hold**. **Glacier Vault Lock** = locked WORM policy
 - **Access Points** (per-team policies + DNS, VPC origin) · **Object Lambda** (redact PII, convert, resize on read)
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Key tumhare paas, AWS mein store nahi → **SSE-C**. Key AWS mein, rotation tumhare haath → **SSE-KMS**. AWS pe bharosa hi nahi → **client-side**
+- Nayi files **apne aap SSE-S3** se encrypt hoti hain — kuch karna nahi
+- Doosri website tumhari files load nahi kar pa rahi → **CORS**
+- Padhte waqt sensitive data chhupa do → **S3 Object Lambda**
+- Kaun chupke se files khol raha → **S3 Access Logs + Athena** (log alag bucket mein, same mein nahi)
+- Thodi der ke liye upload link → **pre-signed URL**. Galti se permanent delete rokna → **MFA Delete**
+- Object Lock **Compliance** = koi nahi hata sakta, root bhi nahi. **Governance** = khaas users hata sakte. **Legal Hold** = bina time limit, haath se hata sakte
+- 4 saal tak backup koi delete na kare → **Glacier Vault Lock**
+
 **Q33.** Compliance requires auditing every use of the encryption key for S3 objects.
 A) SSE-S3 B) SSE-KMS C) SSE-C D) Client-side
 
@@ -558,6 +713,15 @@ A) Bucket policy on A B) CORS configuration on bucket B C) Versioning D) Transfe
 - **Geo restriction** (allow/block countries) · **Cache invalidation** (`/*` or path) · CloudFront for static global content vs **S3 CRR** for dynamic content in few regions
 - **Global Accelerator**: **2 Anycast static IPs**, AWS backbone, **TCP/UDP**, health checks → failover < 1 min. Good for gaming (UDP), IoT, VoIP, static-IP HTTP, fast regional failover. **No caching**
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- CloudFront = har mohalle mein kirana dukaan, maal door ke godown (origin) se pehle hi aa jaata hai
+- Sirf US wale aayein → **Geo Restriction**
+- S3 sirf CloudFront se khule → **OAC** + bucket policy (`Principal: cloudfront.amazonaws.com`, `AWS:SourceArn`)
+- Naya version abhi dikhana → **cache invalidation**
+- Kharcha kam, sirf sasti jagah → **Price Classes**: **All** (sab jagah), **200** (sabse mehengi jagah chhodo), **100** (sabse sasti: North America + Europe)
+- Static IP + host-based routing + duniya bhar mein tez → **Global Accelerator + ALB**
+
 **Q37.** A multiplayer game uses UDP and needs fast global performance with fixed IPs.
 A) CloudFront B) Global Accelerator C) Route 53 latency D) ALB
 
@@ -594,6 +758,16 @@ A) Wait for versioning B) Create a CloudFront invalidation C) Enable CRR D) Rest
 - **Storage Gateway**: **S3 File Gateway** (NFS/SMB → S3, local cache, AD) · **Volume Gateway** (iSCSI, cached/stored, EBS snapshots) · **Tape Gateway** (VTL → S3/Glacier)
 - **Transfer Family**: FTP/FTPS/SFTP into **S3 or EFS**
 - **DataSync**: scheduled sync on-prem (agent) → S3/EFS/FSx; AWS↔AWS (no agent); keeps permissions/metadata
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- 100s TB, net slow, raste mein process bhi → **Snowball Edge** = truck bhar ke data bhejo. Snowball **seedha Glacier mein nahi** → pehle S3, phir lifecycle
+- iSCSI tape → **Tape Gateway**. S3 ko NFS/SMB + AD se → **S3 File Gateway**. FSx for Windows on-prem pe tez → **FSx File Gateway**
+- Windows File Server → **FSx for Windows**. ZFS → **FSx for OpenZFS**. ONTAP: NFS, SMB, iSCSI (**FTP nahi**)
+- FSx Lustre: **Scratch** = kachcha, temporary. **Persistent** = pakka, lambe samay ka, same AZ mein copy
+- **Transfer Family** = FTP, FTPS, SFTP se S3/EFS mein. Bucket public kiye bina FTP pe data do → Transfer Family
+- **DataSync** = on-prem NFS/SMB → S3/EFS/FSx, aur S3 → EFS bhi. Schedule pe sync. **EBS support nahi**
+- File Gateway ka data Glacier mein auto → **S3 Lifecycle Policy**
 
 **Q40.** Windows apps need a shared SMB file system integrated with Active Directory.
 A) EFS B) FSx for Windows File Server C) FSx for Lustre D) S3
@@ -643,6 +817,18 @@ A) EFS Max I/O B) FSx for Lustre linked to S3 C) FSx Windows D) EBS gp3
 - **Kinesis Data Streams**: real-time, retention **up to 365 d**, **replay**, ordering per shard/partition key; shard 1 MB/s in, 2 MB/s out; provisioned or on-demand
 - **Data Firehose**: near real-time, serverless, loads to **S3, Redshift, OpenSearch**, Splunk, HTTP; Lambda transforms; **no storage/replay**
 - **Amazon MQ**: managed ActiveMQ/RabbitMQ for **MQTT, AMQP, STOMP** apps migrating from on-prem; active/standby Multi-AZ
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **SQS** = bus stand ki line — saman line mein rakho, jab fursat ho uthao. 100x traffic → **kuch mat karo**, apne aap scale
+- Ek message do baar process → **Visibility Timeout badhao** (kaam pakda to doosre ko nahi dikhega; default 30 sec, max 12 ghante)
+- Ek baar + sahi order → **FIFO**. Ek message 3 apps ko → **SNS + SQS fan-out** (SNS = mandir ka loudspeaker, sabko ek saath)
+- Kinesis "ProvisionedThroughputExceeded" → **shard badhao** (har shard: 1 MB/s andar, 2 MB/s bahar). Traffic ka pata nahi → **On-demand mode**
+- Ek user ka data order mein → **partition key = user ID**
+- **Kinesis Data Streams** = Narmada ki dhaara, real-time behti. "Real time" → KDS. "**Near** real time" + S3/Redshift mein load → **Firehose**
+- SNS ko **Kinesis Data Streams subscribe nahi kar sakta** (Firehose kar sakta)
+- MQTT / AMQP / JMS bina code badle → **Amazon MQ**. Database pe likhne ka bojh zyada → **SQS buffer**
+- Flink, Kinesis Data Streams se padhta hai, **Firehose se nahi**
 
 **Q44.** Some orders are processed twice because processing takes longer than expected.
 A) Use long polling B) Increase visibility timeout C) Use SNS D) Decrease retention
@@ -701,6 +887,16 @@ A) SQS B) SNS C) Amazon MQ D) Kinesis
 - Patterns: EventBridge → run task (on S3 upload / schedule), SQS-driven service
 - **EKS**: managed Kubernetes (cloud-agnostic) — managed node groups, self-managed nodes, Fargate; storage via **CSI** (EBS, EFS, FSx)
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- ECS launch type sirf do: **EC2 aur Fargate** (EKS launch type nahi hai)
+- Container ko S3 chahiye → **ECS Task Role**. Naye app ko error → us app ke liye **naya task role**
+- Containers mein common files → **EFS**. Docker Hub ki jagah → **ECR**
+- EKS nodes: managed node group, self-managed, Fargate — **Lambda nahi**
+- Docker image chalana → exam ka jawab **ECS/Fargate**, Lambda nahi
+- **App Runner** = naye bande ke liye sabse aasaan: code ya container do, URL lo. Scaling, load balancing, HTTPS sab apne aap
+- **App2Container (A2C)** = purane **Java/.NET** app ko **bina code badle** container mein badlo → ECR + CloudFormation → ECS/EKS/App Runner
+
 **Q49.** Run containers without managing servers or clusters of EC2.
 A) ECS EC2 launch type B) ECS on Fargate C) EKS self-managed nodes D) Elastic Beanstalk single instance
 
@@ -742,6 +938,17 @@ A) ECS B) EKS C) Fargate alone D) Lambda
 - **API Gateway**: REST/WebSocket, throttling, API keys, caching, stages, transforms. Endpoint: **Edge-optimized** (default, cert in us-east-1) / **Regional** / **Private** (VPC endpoint). Auth: IAM, **Cognito**, custom authorizer
 - **Step Functions**: visual workflows, retries, parallel, human approval
 - **Cognito**: **User Pools** (sign-in, MFA, social/SAML; integrates API Gateway/ALB) vs **Identity Pools** (temporary **AWS credentials**, row-level security)
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Kaam 1 ghanta → **Lambda nahi** (max 15 min) → EC2/ECS/Batch
+- RCU aur WCU **alag-alag** badha sakte. Kuch items pe bheed → **DAX**. Item max **400 KB**
+- Naye user ko welcome mail → **DynamoDB Streams + Lambda**
+- **Edge-optimized API Gateway bhi ek hi Region mein** rehta hai (sirf CloudFront edge se aata-jaata)
+- Prod mein steady load → provisioned + auto scaling. Dev mein anpredictable → **on-demand**
+- Edge pe login check → **Lambda@Edge**. Workflow mein insaan ka approval → **Step Functions**
+- DynamoDB → S3 mein JSON → **Export to S3**. Session apne aap expire → **DynamoDB TTL**
+- Login/signup → **Cognito User Pools**. Har user ka apna S3 folder / Facebook login → **Cognito Identity Pools** (IAM Identity Center nahi)
 
 **Q52.** A job runs 40 minutes. Lambda?
 A) Yes, increase timeout B) No — use ECS/Fargate or AWS Batch C) Use Lambda@Edge D) Use Step Functions with one Lambda
@@ -806,6 +1013,15 @@ A) Lambda@Edge B) CloudFront Functions C) API Gateway D) ALB rules
 - **Microservices**: sync (API Gateway, ELB) and async (SQS, SNS, Kinesis, S3 events) per service
 - **Software update spikes on EC2**: put **CloudFront** in front — no app change, cache static files, ASG scales less
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Inmein built-in cache hai: API Gateway, DynamoDB (DAX), CloudFront — **Lambda mein nahi**
+- DynamoDB Global Table se pehle **Streams on** karo
+- Lambda SQS mein nahi likh pa raha → **execution role mein permission nahi** (security group ka lena-dena nahi)
+- 25 min ka kaam, ek din rok ke agle din chalu → **SQS + EC2** (SQS 14 din tak message rakhta hai)
+- Badi static files se EC2 pe load, code na badlo → **CloudFront**
+- GB/second real-time, kai consumer, **replay** → Kinesis Data Streams
+
 **Q58.** Send a welcome email whenever a new user row is added to DynamoDB.
 A) Cron job scanning the table B) DynamoDB Streams → Lambda → SES C) SNS on table D) CloudTrail
 
@@ -840,6 +1056,12 @@ A) Bigger instances B) CloudFront in front C) Move to Lambda D) Add Read Replica
 | Data warehouse (OLAP) | Redshift |
 | Full-text search | OpenSearch |
 | Objects | S3 |
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- MongoDB se **serverless, global** NoSQL chahiye → quiz ka jawab **DynamoDB**. MongoDB **bina code badle** → **DocumentDB**
+- 100 MB files key-value mein → **S3** (S3 bhi key-value hai). Sabse zyada storage copies + auto scaling OLTP → **Aurora**
+- "Dosto ke dosto ke likes" → **Neptune** (graph). Cassandra → **Keyspaces**. Sensor ki reading har second → **Timestream**
 
 **Q60.** Store and query highly connected social network data (friends of friends).
 A) DynamoDB B) Neptune C) Redshift D) RDS
@@ -882,6 +1104,15 @@ A) RDS B) Timestream C) Neptune D) ElastiCache
 - **Managed Service for Apache Flink**: stream processing from KDS/MSK (**not Firehose**)
 - **MSK**: managed Kafka (partitions, configurable message size > 1 MB, EBS storage); MSK Serverless
 - **Pipeline**: IoT Core → KDS → Firehose → S3 → (SQS/Lambda) → Athena → S3 reports → QuickSight / Redshift
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Columnar data warehouse + QuickSight → **Redshift**. Redshift DR → **automatic snapshot + doosre region mein copy**
+- COPY/UNLOAD traffic VPC se hi jaaye → **Enhanced VPC Routing**
+- Naam ka aadha hissa likh ke search → **OpenSearch**. Sab logs ek jagah search → **OpenSearch**
+- Spark/Hive/Presto → **EMR**. ETL / JSON → Parquet → **Glue**. Purana data dobara process na ho → **Glue Job Bookmarks**
+- Kafka bina code badle → **MSK**. Data lake mein row/column level access → **Lake Formation fine-grained access**
+- Stream pe real-time analytics → **Managed Service for Apache Flink** (purana naam Kinesis Data Analytics)
 
 **Q63.** Analysts want SQL queries on CSV logs in S3 with no servers.
 A) Redshift B) Athena C) EMR D) RDS
@@ -937,6 +1168,12 @@ A) S3 bucket policies B) Lake Formation C) QuickSight D) IAM groups only
 | Personalize | Real-time recommendations |
 | Textract | Text, forms, tables from scanned documents |
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **Polly**: **Lexicon** = shabd ka uchcharan ("EC2" → "Elastic Compute Cloud"). **SSML** = zor dena, phusphusana, saans
+- Call recording se PII hatana → **Transcribe**. Doctor ke notes mein PHI / HIPAA → **Comprehend Medical**
+- Gandi photo/video apne aap pakdo, confidence threshold + manual review → **Rekognition**
+
 **Q67.** Extract fields from scanned invoices and forms.
 A) Rekognition B) Textract C) Comprehend D) Kendra
 
@@ -976,6 +1213,17 @@ A) Transcribe B) Comprehend C) Polly D) Lex
 - **CloudTrail**: API history (console/SDK/CLI/services), on by default, **90 days** (→ S3 + Athena for longer). Management events (default), **data events** (S3 object, Lambda invoke — off by default), **Insights** (unusual activity). CloudTrail + EventBridge = alert on any API call
 - **Config**: per-region config history + compliance rules (managed or Lambda custom), **doesn't block**, remediation via **SSM Automation**
 - CloudWatch = performance · CloudTrail = **who did what** · Config = **what changed / compliant?**
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **CloudWatch** = performance (metric, log, alarm). **CloudTrail** = kisne kya kiya (API call). **Config** = setting kya thi, kab badli, rules ke hisaab se sahi hai ya nahi
+- Log mein "Error" aaye to alarm → **Metric Filter** + Alarm
+- EC2 ki **memory** dekhni → **CloudWatch Agent** (default mein nahi aati)
+- Instance kisne delete kiya → **CloudTrail**. 90 din se purana → **S3 mein trail + Athena**. Ajeeb activity → **CloudTrail Insights**
+- Config: **Rules** (port khula hai?), **Remediations** (apne aap theek karo), **Notifications** (badla to SNS)
+- Metric S3/Splunk/Datadog bhejna → **Metric Streams**. Sabse zyada request bhejne wale IP → **Contributor Insights**
+- DynamoDB DeleteTable rokna + alert → IAM deny + **CloudTrail → EventBridge → SNS**
+- Events 6 mahine baad dobara chalane → **EventBridge Archive & Replay**
 
 **Q70.** A production S3 bucket was deleted. How do you find who did it?
 A) CloudWatch Metrics B) CloudTrail C) Config D) Trusted Advisor
@@ -1026,6 +1274,13 @@ A) S3 export tasks B) Subscription filters → Kinesis Data Streams/Firehose in 
 - **IAM Identity Center**: SSO to all org accounts + SAML apps; **permission sets**; ABAC; identity source built-in, AD, Okta
 - **Directory Services**: **Managed Microsoft AD** (real AD in AWS, trust with on-prem) · **AD Connector** (proxy to on-prem) · **Simple AD** (standalone, no on-prem join)
 - **Control Tower**: multi-account landing zone; guardrails **preventive (SCP)** + **detective (Config)**
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- Prod mein sirf audited services, Dev free → **Organizations ke OUs + Prod OU pe SCP**
+- Sirf ek region mein API call → **`aws:RequestedRegion`**
+- EventBridge → Lambda/SNS/SQS/S3 = **resource-based policy**. EventBridge → Kinesis/ECS/Step Functions = **IAM role**
+- Saare accounts mein tags ek jaise → **Tag Policies**
 
 **Q74.** Prevent every account in the Dev OU from launching resources outside eu-west-1.
 A) IAM policy per user B) SCP on the Dev OU with `aws:RequestedRegion` deny C) Config rule D) Permission boundary
@@ -1079,6 +1334,21 @@ A) IAM users in each account B) IAM Identity Center with AD (AD Connector / Mana
 - **GuardDuty**: ML threat detection from **CloudTrail, VPC Flow Logs, DNS logs** (+ optional EKS, RDS, S3, Lambda); crypto-mining finding
 - **Inspector**: vulnerability scans for **EC2 (SSM agent), ECR images, Lambda**
 - **Macie**: finds **PII in S3**
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- In-flight encryption = **HTTPS** + SSL certificate. SSE = server khud encrypt/decrypt kare. Client-side = server ko kuch pata nahi
+- KMS key pehle banana zaroori nahi — **AWS managed key** hoti hai. KMS: **symmetric** (AES-256) + **asymmetric** (RSA/ECC)
+- Auto rotation default **1 saal** (90–2560 din set kar sakte). Har 6 mahine → auto rotation **180 din**
+- KMS key ka access → **Key Policy**. KMS ka har use **CloudTrail** mein dikhta hai
+- **Encrypted AMI share**: account B ko **launch permission** + **KMS key share** (key policy). B ko DescribeKey, ReEncrypt, CreateGrant, Decrypt chahiye
+- SSE-KMS bucket ki replication → source key pe **kms:Decrypt** + target key pe **kms:Encrypt**
+- Aurora Global mein client-side encryption → **KMS Multi-Region Keys**
+- Config values + history → **SSM Parameter Store**. RDS password auto-rotate → **Secrets Manager**
+- Bahar se laya certificate (LetsEncrypt) expire hone wala → ACM **daily expiration event** → EventBridge → SNS. Edge-optimized API / CloudFront certificate → **us-east-1**
+- DDoS ke liye 24/7 team + bill wapas → **Shield Advanced**
+- GuardDuty padhta hai: CloudTrail, VPC Flow Logs, **DNS logs** — **CloudWatch Logs nahi**
+- SQL injection → **WAF**. OS ki kamzori → **Inspector**. S3 mein PII → **Macie**. Saare accounts mein SG/WAF rules → **Firewall Manager**
 
 **Q78.** Database passwords must rotate automatically every 30 days.
 A) Parameter Store standard B) Secrets Manager C) KMS D) IAM
@@ -1153,6 +1423,23 @@ A) GuardDuty B) Macie C) Inspector D) Athena
 - **IPv6**: all public; IPv4 can't be disabled; out of IPs → add IPv4 CIDR. **Egress-only IGW** = outbound-only IPv6
 - Costs: same AZ private IP free; cross-AZ/public IP/inter-region cost; minimize egress; **gateway endpoint cheaper than NAT** for S3
 - **Network Firewall**: L3–L7 for the whole VPC (domain lists, IPS)
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **VPC** = apna gaon. **Subnet** = mohalla. **NACL** = mohalle ka gate (stateless — aana-jaana dono likhna padta). **Security Group** = ghar ka darwaza (stateful — jo bahar gaya wo wapas aa sakta)
+- `10.0.4.0/28` = 10.0.4.0 se 10.0.4.15 (16 IP). 28 instance → **/26**
+- VPC ka CIDR on-prem se **overlap nahi** hona chahiye (10.0.0.0/8 + 192.168.0.0/16 hai → **172.16.0.0/16** lo)
+- Har subnet mein 5 IP AWS rakh leta: .0, **.1 router, .2 DNS, .3 future**, aakhri broadcast
+- IGW laga par internet nahi: route table, public IP, NACL dekho — **SG inbound nahi** (stateful hai)
+- **VPC Peering** = do gaon ke beech seedhi sadak. **Transitive nahi** → 3 VPC = **3 peering**. **Dono taraf route table** update
+- **Transit Gateway** = Itarsi junction — sab lines ek jagah judti hain. VPN 1.25 Gbps se zyada → **TGW + ECMP**
+- **Direct Connect** = apni private sadak (setup mein 1 mahina+). **VPN** = public highway pe band gaadi. Sasta DX backup → **S2S VPN**
+- DX se doosre region ke VPC → **Direct Connect Gateway**. 500 Mbps → **Hosted** connection
+- S2S VPN = **VGW + Customer Gateway**. Kai offices internet se jodna → **VPN CloudHub**
+- Gateway endpoint sirf **S3 aur DynamoDB**, aur free
+- IPv4 khatam → **naya IPv4 CIDR jodo** (IPv4 band nahi hota)
+- Bastion: **port 22, company ke public IP** se. EC2 sirf ALB se → source = **ALB ka security group**
+- Flow Logs = traffic ki **jaankari**. Traffic Mirroring = **packet ki copy**. L3–L7 → **Network Firewall**
 
 **Q84.** A subnet must hold 29 EC2 instances. Smallest CIDR?
 A) /28 B) /27 C) /26 D) /25
@@ -1239,6 +1526,13 @@ A) NAT Gateway B) Egress-only Internet Gateway C) IGW D) VPC endpoint
 - **AWS Backup**: central policies (plans), cross-region/account, PITR, tags; **Vault Lock** = WORM (even root can't delete)
 - 200 TB on 100 Mbps ≈ 185 days; DX 1 Gbps ≈ 18.5 days; **Snowball ≈ 1 week**
 
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **Backup & Restore** = sab band, sirf backup — sasta, slow. **Pilot Light** = chulhe ki chhoti lau jalti rehti (sirf DB). **Warm Standby** = chhota version poora chalu. **Multi-Site** = do ghar, dono chalu — sabse mehenga, sabse tez
+- Oracle → Aurora: pehle **SCT** (schema), phir **DMS** (data)
+- Sab services ka backup ek jagah → **AWS Backup**. Server lift-and-shift → **MGN**. VMware hi rakhna → **VMware Cloud on AWS**
+- RDS MySQL → Aurora MySQL sasta → **snapshot restore as Aurora**
+
 **Q92.** RPO of hours is acceptable and budget is minimal.
 A) Multi-Site B) Warm Standby C) Pilot Light D) Backup & Restore
 
@@ -1288,6 +1582,14 @@ A) Lambda scripts B) AWS Backup with Organizations policies + Vault Lock C) EBS 
 - **SSM**: **Session Manager** (no SSH/port 22/bastion), Run Command, Patch Manager, Maintenance Windows, Automation runbooks
 - **Cost Explorer** (analyze, Savings Plan recommendations, 18-month forecast) · **Cost Anomaly Detection** (ML, root cause, SNS)
 - **Outposts**: AWS racks on-prem (latency, data residency) · **AWS Batch**: Docker batch jobs, no time limit · **AppFlow**: SaaS (Salesforce, SAP, Slack) ↔ S3/Redshift · **Amplify**: full-stack web/mobile · **Instance Scheduler**: stop/start EC2/RDS on schedule
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- S3 → Lambda (async) fail → **DLQ Lambda pe** lagao
+- CloudFront + WAF + ALB mein IP block → **WAF**
+- Linux HPC nodes ke beech sabse tez network → **EFA**
+- Doosre region mein poora setup dobara → **CloudFormation**. Marketing SMS/push → **Pinpoint**
+- Port 22 khole bina login → **SSM Session Manager**. Lakhon jobs → **Batch**. Salesforce/Slack → S3 → **AppFlow**
 
 **Q96.** Admins need shell access to private EC2 instances without opening port 22 or a bastion.
 A) EC2 Instance Connect B) SSM Session Manager C) VPN D) Public IPs
@@ -1342,6 +1644,10 @@ A) Give S3 full access B) CloudFormation service role + user has `iam:PassRole` 
 - **6 pillars**: Operational Excellence · Security · Reliability · Performance Efficiency · Cost Optimization · **Sustainability** (synergy, not trade-offs)
 - **Well-Architected Tool** (free review) · **Trusted Advisor** (cost, performance, security, fault tolerance, service limits, operational excellence; full checks need Business/Enterprise support)
 - Tips: elimination, don't over-think, read FAQs and whitepapers, practice exams
+
+> **Yaad rakho (exam traps)** — course quiz mein yahi poocha jaata hai
+
+- **Trusted Advisor** checks: cost optimization, performance, security, fault tolerance, service limits, operational excellence
 
 **Q101.** Which pillar covers "recover from failures and meet demand"?
 A) Performance Efficiency B) Reliability C) Operational Excellence D) Cost

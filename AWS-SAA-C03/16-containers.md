@@ -74,9 +74,24 @@ Managed Kubernetes. **Alternative to ECS** (same goal, different API). Pick when
 
 **Data volumes**: need a **StorageClass** manifest + **CSI-compliant driver**. Supports **EBS, EFS (works with Fargate), FSx for Lustre, FSx for NetApp ONTAP**.
 
+## AWS App Runner
+
+Sabse aasaan tareeka web app / API deploy karne ka — **infrastructure ka kuch pata hona zaroori nahi**. Source code ya container image do, vCPU/RAM/autoscaling/health check set karo → App Runner build + deploy karke **URL** de deta hai.
+- Built-in: **auto scaling, high availability, load balancing, encryption**, VPC access (DB, cache, queue se jud sakta)
+- Use: web apps, APIs, microservices, rapid production deployment
+- Exam: "developer AWS mein naya hai, containers easiest way se deploy" → **App Runner**
+
+## AWS App2Container (A2C)
+
+**CLI tool** jo **Java aur .NET** web apps ko Docker container mein badalta hai — **bina code change** (lift-and-shift, on-prem/bare metal/VM se).
+- Flow: discover + analyze apps → containerize → artifacts generate (**CloudFormation**, ECS task / EKS pod definitions, CI/CD pipelines) → image **ECR** mein → deploy to **ECS, EKS ya App Runner**
+- Exam: "legacy Java/.NET app ko bina code badle containers mein migrate" → **App2Container**
+
 ## Exam Hints
 
 - Run containers without managing servers → **Fargate**
+- Easiest deploy of web app/API for a beginner → **App Runner**
+- Java/.NET legacy app → containers without code change → **App2Container**
 - Company already on Kubernetes → **EKS**
 - Per-task AWS permissions → **ECS Task Role**
 - Shared persistent storage across tasks/AZs → **EFS**

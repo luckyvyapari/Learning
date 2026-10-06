@@ -47,6 +47,7 @@ S3 is proprietary (not NFS/SMB) → Storage Gateway bridges **on-prem ↔ cloud*
 | **S3 File Gateway** | **NFS / SMB** | S3 (Standard, IA, One Zone-IA, Intelligent-Tiering; Glacier via lifecycle) | Recently used data cached; IAM role per gateway; SMB integrates with **AD** |
 | **Volume Gateway** | **iSCSI** block | S3 + **EBS snapshots** | **Cached volumes**: low-latency recent data. **Stored volumes**: entire dataset on-prem, scheduled backup to S3 |
 | **Tape Gateway** | iSCSI **VTL** | S3 + Glacier | Keep existing tape backup processes; works with major backup software |
+| **FSx File Gateway** | **SMB** | **FSx for Windows File Server** | On-prem pe FSx Windows ka **low-latency local cache**; Windows native (NTFS, SMB, AD). Exam: "FSx Windows files on-prem pe tez chahiye" → FSx File Gateway |
 
 ## AWS Transfer Family
 

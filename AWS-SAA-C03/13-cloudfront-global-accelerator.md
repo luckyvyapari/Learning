@@ -30,6 +30,17 @@ Content cached at **edge locations** (hundreds of PoPs) → better read performa
 ### Cache Invalidation
 CloudFront only refreshes after TTL expires. Force refresh with **invalidation**: all files (`*`) or a path (`/images/*`).
 
+### Price Classes (cost kam karne ke liye)
+Har edge location ka data-out rate alag hai (US/Canada sasta, India approx double). Kam edge locations use karke kharcha ghatao:
+
+| Price Class | Edge locations | Yaad rakho |
+|---|---|---|
+| **All** | Poori duniya | Best performance, sabse mehenga |
+| **200** | Most regions, sabse mehengi jagah chhod ke | Beech ka raasta |
+| **100** | Sirf sasti — **North America + Europe** | Sabse sasta |
+
+Exam: "users sirf US aur Europe mein, CloudFront ka bill zyada" → **Price Class 100**.
+
 ## Global Accelerator
 
 Problem: global users go over the public internet (many hops, latency).

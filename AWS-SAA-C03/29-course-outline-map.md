@@ -35,7 +35,7 @@ Maps every section of the Udemy course (33 sections) to the note file that cover
 | 29 | More Solution Architectures | [27](27-more-solutions-architecture.md) | Event processing, caching, IP blocking, HPC, HA EC2 |
 | 30 | Other Services | [27](27-more-solutions-architecture.md) | CloudFormation, SES, Pinpoint, SSM, Cost Explorer, Anomaly, Outposts, Batch, AppFlow, Amplify, Instance Scheduler |
 | 31 | WhitePapers & Architectures | [28](28-well-architected-exam-tips.md) | Well-Architected, tool, Trusted Advisor |
-| 32 | Preparing for the Exam | [28](28-well-architected-exam-tips.md) | Exam logistics + tips |
+| 32 | Preparing for the Exam | [28](28-well-architected-exam-tips.md) | Exam logistics + tips. **Downloaded copy on SSD is missing this section (practice exam)** — use AWS Skill Builder official practice set instead |
 | 33 | Congratulations | [28](28-well-architected-exam-tips.md) | Certification paths |
 
 ## Extras (video / hands-on only topics — not in the slide deck)
